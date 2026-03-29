@@ -96,21 +96,97 @@ bot.command('about', (ctx) => {
 });
 
 // Add member command
-bot.command('add', (ctx) => {
-  logUserAction(ctx, 'COMMAND: /add', 'User wants to add a member');
+bot.command('add', async (ctx) => {
+  const args = ctx.message.text.split(' ').slice(1);
+  const memberData = args.join(' ').trim();
   
-  ctx.reply(
-    `🆕 *Add New Member*\n\n` +
-    `Please provide member details in this format:\n` +
-    `\`Name | Role | Email | Phone | Notes\`\n\n` +
-    `📝 *Example:*\n` +
-    `\`John Doe | VP Education | john@example.com | +1234567890 | Experienced speaker\`\n\n` +
-    `✨ *Required:* Name\n` +
-    `📋 *Optional:* Role, Email, Phone, Notes\n\n` +
-    `You can also use just the name:\n` +
-    `\`Jane Smith\``,
-    { parse_mode: 'Markdown' }
-  );
+  logUserAction(ctx, 'COMMAND: /add', memberData ? `Adding: "${memberData}"` : 'User wants to add a member');
+  
+  // If no arguments provided, show instructions
+  if (!memberData) {
+    ctx.reply(
+      `🆕 *Add New Member*\n\n` +
+      `Please provide member details in this format:\n` +
+      `\`/add Name | Role | Email | Phone | Notes\`\n\n` +
+      `📝 *Example:*\n` +
+      `\`/add John Doe | VP Education | john@example.com | +1234567890 | Experienced speaker\`\n\n` +
+      `✨ *Required:* Name\n` +
+      `📋 *Optional:* Role, Email, Phone, Notes\n\n` +
+      `You can also use just the name:\n` +
+      `\`/add Jane Smith\``,
+      { parse_mode: 'Markdown' }
+    );
+    return;
+  }
+
+  // Process member data
+  try {
+    let member: Member;
+
+    // Check if this looks like detailed member data (contains | separator)
+    if (memberData.includes('|')) {
+      console.log('🔍 DEBUG: Detected pipe separator in /add command, parsing as detailed member format');
+      const parts = memberData.split('|').map(part => part.trim());
+      
+      if (parts.length < 1 || !parts[0]) {
+        ctx.reply('❌ Please provide at least a name for the member.');
+        return;
+      }
+
+      member = {
+        name: parts[0],
+        role: parts[1] || 'Member',
+        email: parts[2] || undefined,
+        phone: parts[3] || undefined,
+        notes: parts[4] || undefined,
+        telegram_username: ctx.from?.username,
+        telegram_user_id: ctx.from?.id,
+        status: 'Active'
+      };
+    } else {
+      console.log('🔍 DEBUG: Simple name in /add command, adding basic member');
+      // Simple name format
+      member = {
+        name: memberData,
+        role: 'Member',
+        telegram_username: ctx.from?.username,
+        telegram_user_id: ctx.from?.id,
+        status: 'Active'
+      };
+    }
+
+    console.log('🔍 DEBUG: Attempting to add member via /add command:', JSON.stringify(member, null, 2));
+
+    const result = await db.addMember(member);
+
+    console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
+
+    if (!result.success) {
+      ctx.reply(`❌ Failed to add member: ${result.error}`);
+      console.log('❌ DEBUG: Add member failed:', result.error);
+      return;
+    }
+
+    const addedMember = result.member!;
+    
+    ctx.reply(
+      `✅ *Member Added Successfully*\n\n` +
+      `📛 *Name:* ${addedMember.name}\n` +
+      `📋 *Role:* ${addedMember.role}\n` +
+      `🆔 *ID:* ${addedMember.id}\n` +
+      `📅 *Added:* ${new Date().toLocaleDateString()}\n\n` +
+      `Welcome to Toastmasters Glagol! 🎉`,
+      { parse_mode: 'Markdown' }
+    );
+
+    logUserAction(ctx, 'MEMBER ADDED', `${addedMember.name} (ID: ${addedMember.id})`);
+    console.log('✅ DEBUG: Member successfully added to database via /add command');
+
+  } catch (error) {
+    logUserAction(ctx, 'ERROR', `Add member via /add failed: ${error}`);
+    console.error('❌ DEBUG: Exception during /add member:', error);
+    ctx.reply('❌ An error occurred while adding the member. Please try again.');
+  }
 });
 
 // Remove member command
@@ -328,6 +404,7 @@ bot.on('text', async (ctx) => {
 
   // Check if this looks like member data (contains | separator)
   if (message.includes('|')) {
+    console.log('🔍 DEBUG: Detected pipe separator, parsing as detailed member format');
     // Parse member data format: Name | Role | Email | Phone | Notes
     const parts = message.split('|').map(part => part.trim());
     
@@ -347,11 +424,16 @@ bot.on('text', async (ctx) => {
       status: 'Active'
     };
 
+    console.log('🔍 DEBUG: Attempting to add member:', JSON.stringify(member, null, 2));
+
     try {
       const result = await db.addMember(member);
 
+      console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
+
       if (!result.success) {
         ctx.reply(`❌ Failed to add member: ${result.error}`);
+        console.log('❌ DEBUG: Add member failed:', result.error);
         return;
       }
 
@@ -368,9 +450,11 @@ bot.on('text', async (ctx) => {
       );
 
       logUserAction(ctx, 'MEMBER ADDED', `${addedMember.name} (ID: ${addedMember.id})`);
+      console.log('✅ DEBUG: Member successfully added to database');
 
     } catch (error) {
       logUserAction(ctx, 'ERROR', `Add member failed: ${error}`);
+      console.error('❌ DEBUG: Exception during add member:', error);
       ctx.reply('❌ An error occurred while adding the member. Please try again.');
     }
     
@@ -379,6 +463,8 @@ bot.on('text', async (ctx) => {
 
   // Check if it's just a name (simple member addition)
   if (message.length > 2 && message.length < 50 && !message.includes('\n')) {
+    console.log('🔍 DEBUG: Detected simple name format, adding basic member');
+    
     const member: Member = {
       name: message,
       role: 'Member',
@@ -387,11 +473,16 @@ bot.on('text', async (ctx) => {
       status: 'Active'
     };
 
+    console.log('🔍 DEBUG: Attempting to add simple member:', JSON.stringify(member, null, 2));
+
     try {
       const result = await db.addMember(member);
 
+      console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
+
       if (!result.success) {
         ctx.reply(`❌ Failed to add member: ${result.error}`);
+        console.log('❌ DEBUG: Add member failed:', result.error);
         return;
       }
 
@@ -408,9 +499,11 @@ bot.on('text', async (ctx) => {
       );
 
       logUserAction(ctx, 'MEMBER ADDED', `${addedMember.name} (ID: ${addedMember.id})`);
+      console.log('✅ DEBUG: Member successfully added to database');
 
     } catch (error) {
       logUserAction(ctx, 'ERROR', `Add member failed: ${error}`);
+      console.error('❌ DEBUG: Exception during add member:', error);
       ctx.reply('❌ An error occurred while adding the member. Please try again.');
     }
     
@@ -418,6 +511,7 @@ bot.on('text', async (ctx) => {
   }
 
   // Default response for other text messages
+  console.log('🔍 DEBUG: Message not recognized as member data, sending help response');
   if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
     ctx.reply(
       `Hello ${ctx.from?.first_name}! 👋\n\n` +
@@ -475,32 +569,49 @@ bot.catch((err, ctx) => {
 // Start the bot
 const startBot = async () => {
   try {
-    console.log('='.repeat(50));
-    console.log('🚀 Starting Telegram bot...');
+    console.log('='.repeat(60));
+    console.log('🎤 Starting Toastmasters Glagol Members Bot...');
     console.log(`🔑 Bot Token: ${BOT_TOKEN?.substring(0, 10)}...${BOT_TOKEN?.substring(-5)}`);
     console.log(`📅 Started at: ${new Date().toLocaleString()}`);
-    console.log('='.repeat(50));
+    
+    // Test database connection
+    try {
+      console.log('🔄 Testing database connection...');
+      const testResult = await db.getMemberStats();
+      if (testResult.success) {
+        console.log('✅ Database connection successful');
+        console.log(`📊 Current members: ${testResult.stats?.totalMembers || 0}`);
+      } else {
+        console.log('⚠️ Database connection warning:', testResult.error);
+        console.log('   Bot will start but database operations may fail');
+      }
+    } catch (dbError) {
+      console.log('⚠️ Database connection failed:', dbError);
+      console.log('   Bot will start but database operations may fail');
+    }
+    
+    console.log('='.repeat(60));
     
     await bot.launch();
     
-    console.log('✅ Bot is running and ready to receive messages!');
+    console.log('✅ Bot is running and ready to manage members!');
     console.log('📝 Activity log:');
     console.log('');
     
     // Enable graceful stop
     process.once('SIGINT', () => {
-      console.log('\n🚫 Received SIGINT, stopping bot...');
+      console.log('\n🛑 Received SIGINT, stopping bot...');
       bot.stop('SIGINT');
     });
     process.once('SIGTERM', () => {
-      console.log('\n🚫 Received SIGTERM, stopping bot...');
+      console.log('\n🛑 Received SIGTERM, stopping bot...');
       bot.stop('SIGTERM');
     });
   } catch (error) {
-    console.error('='.repeat(50));
+    console.error('='.repeat(60));
     console.error('❌ Failed to start bot:');
     console.error(error);
-    console.error('='.repeat(50));
+    console.error('='.repeat(60));
     process.exit(1);
   }
 };
