@@ -1,41 +1,68 @@
 # Toastmasters Glagol Members Bot 🎤
 
-A Telegram bot for managing Toastmasters club members with full CRUD operations and database persistence.
+Телеграм бот для управления участниками клуба Toastmasters с полным функционалом CRUD операций и постоянным хранением данных.
 
-## Features
+## Action Items 📝
 
-- **Member Management**: Add, remove, list, and find members
-- **Database Storage**: Persistent storage with Supabase
-- **Smart Adding**: Support for detailed member info or simple name-only addition
-- **Search Capability**: Find members by name or ID
-- **Club Statistics**: View member counts and role distribution
-- **TypeScript**: Full type safety and modern development
-- **Production Ready**: Deployed on Render with proper error handling
+### Планируемые функции:
 
-## Commands
+1. **💰 Добавить поле "оплата членского взноса"**
+   - [ ] Поле для тех, кто заплатил за членство в текущем сроке
+   - [ ] Команда для обновления статуса оплаты
 
-### 📋 Member Management
-- `/add` - Add a new member (with guided format)
-- `/remove <name>` - Remove a member by name or ID
-- `/list` - Show all active members
-- `/find <name>` - Find and display member details
-- `/stats` - Show club statistics
+2. **📅 Функциональность управления встречами**
+   - [ ] Создание следующей встречи с датой
+   - [ ] Список прошлых встреч
+   - [ ] Информация о встрече:
+     - Количество гостей
+     - Контакты гостей
+     - Члены которые участвовали
+     - Занятые и незанятые роли
 
-### ℹ️ General Commands
-- `/start` - Welcome message and overview
-- `/help` - Show all available commands
-- `/about` - Information about the bot
+3. **👥 Управление участниками и гостями**
+   - [ ] Добавить текущих участников клуба
+   - [ ] Список потенциальных гостей
+   - [ ] Приглашение гостей на следующую встречу
 
-## Quick Member Addition
+### Завершенное ✅
+- [x] Базовое управление участниками (добавление, удаление, поиск)
+- [x] Интеграция с базой данных Supabase
+- [x] Локализация на русском языке
 
-**Detailed Format:**
+## Функции
+
+- **Управление участниками**: Добавление, удаление, просмотр и поиск участников
+- **Хранение в БД**: Постоянное хранение данных в Supabase
+- **Умное добавление**: Поддержка подробной информации или простого добавления по имени
+- **Поиск**: Находить участников по имени или ID
+- **Статистика клуба**: Просмотр количества участников и распределения ролей  
+- **TypeScript**: Полная типизация и современная разработка
+- **Production Ready**: Развернут на Render с корректной обработкой ошибок
+
+## Команды
+
+### 📋 Управление участниками
+- `/add` - Добавить нового участника (с подсказками по формату)
+- `/remove <имя>` - Удалить участника по имени или ID
+- `/list` - Показать всех активных участников
+- `/find <имя>` - Найти и показать данные участника
+- `/stats` - Показать статистику клуба
+
+### ℹ️ Общие команды
+- `/start` - Приветственное сообщение и обзор
+- `/help` - Показать все доступные команды  
+- `/about` - Информация о боте
+
+## Быстрое добавление участников
+
+**Подробный формат:**
 ```
-John Doe | VP Education | john@example.com | +1234567890 | Experienced speaker
+Иван Петров | Вице-президент по образованию | ivan@example.com | +71234567890 | Опытный спикер
 ```
 
-**Simple Format:**
+**Простой формат:**  
 ```
-Jane Smith
+Анна Сидорова
 ```
 
 ## Prerequisites

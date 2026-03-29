@@ -42,3 +42,9 @@ INSERT INTO public.members (name, role, notes) VALUES
 ('John Doe', 'President', 'Club President and experienced speaker'),
 ('Jane Smith', 'VP Education', 'Manages the educational program')
 ON CONFLICT DO NOTHING;
+
+-- Insert sample data (optional)
+INSERT INTO public.members (name, role, notes) VALUES 
+('John Doe', 'President', 'Club President and experienced speaker'),
+('Jane Smith', 'VP Education', 'Manages the educational program')
+ON CONFLICT DO NOTHING;
