@@ -33,18 +33,18 @@ bot.start((ctx) => {
   logUserAction(ctx, 'COMMAND: /start', 'New user started the bot');
   
   ctx.reply(
-    `Welcome to Toastmasters Glagol Members Bot! 🎤\n\n` +
-    `I help manage our club member list. Here's what I can do:\n\n` +
-    `📋 *Member Management:*\n` +
-    `• /add - Add a new member\n` +
-    `• /remove - Remove a member\n` +
-    `• /list - Show all members\n` +
-    `• /find - Find a specific member\n` +
-    `• /stats - Show member statistics\n\n` +
-    `ℹ️ *Other Commands:*\n` +
-    `• /help - Show this help message\n` +
-    `• /about - About this bot\n\n` +
-    `Ready to help manage our Toastmasters community! 🚀`,
+    `Добро пожаловать в бота для участников Toastmasters Glagol! 🎤\n\n` +
+    `Я помогаю управлять списком участников нашего клуба. Вот что я умею:\n\n` +
+    `📋 *Управление участниками:*\n` +
+    `• /add - Добавить нового участника\n` +
+    `• /remove - Удалить участника\n` +
+    `• /list - Показать всех участников\n` +
+    `• /find - Найти конкретного участника\n` +
+    `• /stats - Показать статистику участников\n\n` +
+    `ℹ️ *Другие команды:*\n` +
+    `• /help - Показать это справочное сообщение\n` +
+    `• /about - О боте\n\n` +
+    `Готов помочь управлять нашим сообществом Toastmasters! 🚀`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -54,21 +54,21 @@ bot.help((ctx) => {
   logUserAction(ctx, 'COMMAND: /help', 'User requested help');
   
   ctx.reply(
-    `🎤 *Toastmasters Glagol Members Bot*\n\n` +
-    `📋 *Member Management Commands:*\n` +
-    `• /add - Add a new member to our club\n` +
-    `• /remove <name> - Remove a member by name\n` +
-    `• /list - Show all active members\n` +
-    `• /find <name> - Find member details\n` +
-    `• /stats - Show club statistics\n\n` +
-    `🔧 *Usage Examples:*\n` +
-    `• \`/add\` - Follow the prompts to add a member\n` +
-    `• \`/remove John Doe\` - Remove John Doe\n` +
-    `• \`/find John\` - Find members named John\n\n` +
-    `ℹ️ *General Commands:*\n` +
-    `• /start - Welcome message\n` +
-    `• /help - This help message\n` +
-    `• /about - About the bot`,
+    `🎤 *Бот участников Toastmasters Glagol*\n\n` +
+    `📋 *Команды управления участниками:*\n` +
+    `• /add - Добавить нового участника в наш клуб\n` +
+    `• /remove <имя> - Удалить участника по имени\n` +
+    `• /list - Показать всех активных участников\n` +
+    `• /find <имя> - Найти детали участника\n` +
+    `• /stats - Показать статистику клуба\n\n` +
+    `🔧 *Примеры использования:*\n` +
+    `• \`/add\` - Следуй подсказкам для добавления участника\n` +
+    `• \`/remove Иван Петров\` - Удалить Ивана Петрова\n` +
+    `• \`/find Иван\` - Найти участников с именем Иван\n\n` +
+    `ℹ️ *Общие команды:*\n` +
+    `• /start - Приветственное сообщение\n` +
+    `• /help - Это справочное сообщение\n` +
+    `• /about - О боте`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -78,115 +78,39 @@ bot.command('about', (ctx) => {
   logUserAction(ctx, 'COMMAND: /about', 'User requested bot info');
   
   ctx.reply(
-    `🎤 *Toastmasters Glagol Members Bot*\n\n` +
-    `This bot helps manage our Toastmasters club member database.\n\n` +
-    `🛠️ *Built with:*\n` +
+    `🎤 *Бот участников Toastmasters Glagol*\n\n` +
+    `Этот бот помогает управлять базой данных участников нашего клуба Toastmasters.\n\n` +
+    `🛠️ *Создан с помощью:*\n` +
     `• TypeScript\n` +
     `• Telegraf.js\n` +
-    `• Supabase Database\n` +
-    `• Deployed on Render\n\n` +
-    `📊 *Features:*\n` +
-    `• Add/Remove members\n` +
-    `• Member search and listing\n` +
-    `• Club statistics\n` +
-    `• Data persistence\n\n` +
-    `Created for Toastmasters Glagol Club 🌟`,
+    `• База данных Supabase\n` +
+    `• Размещён на Render\n\n` +
+    `📊 *Возможности:*\n` +
+    `• Добавление/удаление участников\n` +
+    `• Поиск и список участников\n` +
+    `• Статистика клуба\n` +
+    `• Сохранение данных\n\n` +
+    `Создано для клуба Toastmasters Glagol 🌟`,
     { parse_mode: 'Markdown' }
   );
 });
 
 // Add member command
-bot.command('add', async (ctx) => {
-  const args = ctx.message.text.split(' ').slice(1);
-  const memberData = args.join(' ').trim();
+bot.command('add', (ctx) => {
+  logUserAction(ctx, 'COMMAND: /add', 'User wants to add a member');
   
-  logUserAction(ctx, 'COMMAND: /add', memberData ? `Adding: "${memberData}"` : 'User wants to add a member');
-  
-  // If no arguments provided, show instructions
-  if (!memberData) {
-    ctx.reply(
-      `🆕 *Add New Member*\n\n` +
-      `Please provide member details in this format:\n` +
-      `\`/add Name | Role | Email | Phone | Notes\`\n\n` +
-      `📝 *Example:*\n` +
-      `\`/add John Doe | VP Education | john@example.com | +1234567890 | Experienced speaker\`\n\n` +
-      `✨ *Required:* Name\n` +
-      `📋 *Optional:* Role, Email, Phone, Notes\n\n` +
-      `You can also use just the name:\n` +
-      `\`/add Jane Smith\``,
-      { parse_mode: 'Markdown' }
-    );
-    return;
-  }
-
-  // Process member data
-  try {
-    let member: Member;
-
-    // Check if this looks like detailed member data (contains | separator)
-    if (memberData.includes('|')) {
-      console.log('🔍 DEBUG: Detected pipe separator in /add command, parsing as detailed member format');
-      const parts = memberData.split('|').map(part => part.trim());
-      
-      if (parts.length < 1 || !parts[0]) {
-        ctx.reply('❌ Please provide at least a name for the member.');
-        return;
-      }
-
-      member = {
-        name: parts[0],
-        role: parts[1] || 'Member',
-        email: parts[2] || undefined,
-        phone: parts[3] || undefined,
-        notes: parts[4] || undefined,
-        telegram_username: ctx.from?.username,
-        telegram_user_id: ctx.from?.id,
-        status: 'Active'
-      };
-    } else {
-      console.log('🔍 DEBUG: Simple name in /add command, adding basic member');
-      // Simple name format
-      member = {
-        name: memberData,
-        role: 'Member',
-        telegram_username: ctx.from?.username,
-        telegram_user_id: ctx.from?.id,
-        status: 'Active'
-      };
-    }
-
-    console.log('🔍 DEBUG: Attempting to add member via /add command:', JSON.stringify(member, null, 2));
-
-    const result = await db.addMember(member);
-
-    console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
-
-    if (!result.success) {
-      ctx.reply(`❌ Failed to add member: ${result.error}`);
-      console.log('❌ DEBUG: Add member failed:', result.error);
-      return;
-    }
-
-    const addedMember = result.member!;
-    
-    ctx.reply(
-      `✅ *Member Added Successfully*\n\n` +
-      `📛 *Name:* ${addedMember.name}\n` +
-      `📋 *Role:* ${addedMember.role}\n` +
-      `🆔 *ID:* ${addedMember.id}\n` +
-      `📅 *Added:* ${new Date().toLocaleDateString()}\n\n` +
-      `Welcome to Toastmasters Glagol! 🎉`,
-      { parse_mode: 'Markdown' }
-    );
-
-    logUserAction(ctx, 'MEMBER ADDED', `${addedMember.name} (ID: ${addedMember.id})`);
-    console.log('✅ DEBUG: Member successfully added to database via /add command');
-
-  } catch (error) {
-    logUserAction(ctx, 'ERROR', `Add member via /add failed: ${error}`);
-    console.error('❌ DEBUG: Exception during /add member:', error);
-    ctx.reply('❌ An error occurred while adding the member. Please try again.');
-  }
+  ctx.reply(
+    `🆕 *Добавить нового участника*\n\n` +
+    `Пожалуйста, предоставьте детали участника в таком формате:\n` +
+    `\`Имя | Роль | Email | Телефон | Заметки\`\n\n` +
+    `📝 *Пример:*\n` +
+    `\`Иван Петров | Вице-президент по образованию | ivan@example.com | +71234567890 | Опытный спикер\`\n\n` +
+    `✨ *Обязательно:* Имя\n` +
+    `📋 *Необязательно:* Роль, Email, Телефон, Заметки\n\n` +
+    `Вы также можете использовать только имя:\n` +
+    `\`Анна Сидорова\``,
+    { parse_mode: 'Markdown' }
+  );
 });
 
 // Remove member command
@@ -198,12 +122,12 @@ bot.command('remove', async (ctx) => {
 
   if (!identifier) {
     ctx.reply(
-      `❓ *Remove Member*\n\n` +
-      `Please specify the member name or ID to remove:\n\n` +
-      `📝 *Examples:*\n` +
-      `• \`/remove John Doe\`\n` +
-      `• \`/remove 5\` (member ID)\n\n` +
-      `⚠️ *Warning:* This action cannot be undone!`,
+      `❓ *Удалить участника*\n\n` +
+      `Пожалуйста, укажите имя участника или ID для удаления:\n\n` +
+      `📝 *Примеры:*\n` +
+      `• \`/remove Иван Петров\`\n` +
+      `• \`/remove 5\` (ID участника)\n\n` +
+      `⚠️ *Предупреждение:* Это действие нельзя отменить!`,
       { parse_mode: 'Markdown' }
     );
     return;
@@ -217,19 +141,19 @@ bot.command('remove', async (ctx) => {
     const result = await db.removeMember(searchTerm);
 
     if (!result.success) {
-      ctx.reply(`❌ Failed to remove member: ${result.error}`);
+      ctx.reply(`❌ Не удалось удалить участника: ${result.error}`);
       return;
     }
 
     ctx.reply(
-      `✅ *Member Removed Successfully*\n\n` +
-      `Member "${identifier}" has been removed from the club database.`,
+      `✅ *Участник успешно удалён*\n\n` +
+      `Участник "${identifier}" был удалён из базы данных клуба.`,
       { parse_mode: 'Markdown' }
     );
 
   } catch (error) {
     logUserAction(ctx, 'ERROR', `Remove member failed: ${error}`);
-    ctx.reply('❌ An error occurred while removing the member. Please try again.');
+    ctx.reply('❌ Произошла ошибка при удалении участника. Пожалуйста, попробуйте ещё раз.');
   }
 });
 
@@ -241,7 +165,7 @@ bot.command('list', async (ctx) => {
     const result = await db.getAllMembers();
 
     if (!result.success) {
-      ctx.reply(`❌ Failed to fetch members: ${result.error}`);
+      ctx.reply(`❌ Не удалось загрузить список участников: ${result.error}`);
       return;
     }
 
@@ -249,32 +173,32 @@ bot.command('list', async (ctx) => {
 
     if (members.length === 0) {
       ctx.reply(
-        `📭 *No Members Found*\n\n` +
-        `The member database is empty.\n` +
-        `Use /add to add the first member!`,
+        `📭 *Участников не найдено*\n\n` +
+        `База данных участников пуста.\n` +
+        `Используйте /add, чтобы добавить первого участника!`,
         { parse_mode: 'Markdown' }
       );
       return;
     }
 
-    let message = `👥 *Toastmasters Glagol Members* (${members.length})\n\n`;
+    let message = `👥 *Участники Toastmasters Glagol* (${members.length})\n\n`;
     
     members.forEach((member, index) => {
-      const role = member.role || 'Member';
-      const joinDate = member.joined_date ? new Date(member.joined_date).toLocaleDateString() : 'Unknown';
+      const role = member.role || 'Участник';
+      const joinDate = member.joined_date ? new Date(member.joined_date).toLocaleDateString() : 'Неизвестно';
       
       message += `${index + 1}. *${member.name}*\n`;
-      message += `   📋 Role: ${role}\n`;
+      message += `   📋 Роль: ${role}\n`;
       if (member.telegram_username) {
         message += `   💬 Telegram: @${member.telegram_username}\n`;
       }
       if (member.email) {
         message += `   📧 Email: ${member.email}\n`;
       }
-      message += `   📅 Joined: ${joinDate}\n\n`;
+      message += `   � Присоединился: ${joinDate}\n\n`;
     });
 
-    message += `\n🔍 Use /find <name> for detailed info\n📊 Use /stats for club statistics`;
+    message += `\n🔍 Используйте /find <имя> для получения подробной информации\n📊 Используйте /stats для статистики клуба`;
 
     // Split message if too long (Telegram limit ~4096 chars)
     if (message.length > 4000) {
@@ -288,7 +212,7 @@ bot.command('list', async (ctx) => {
 
   } catch (error) {
     logUserAction(ctx, 'ERROR', `List members failed: ${error}`);
-    ctx.reply('❌ An error occurred while fetching the member list. Please try again.');
+    ctx.reply('❌ Произошла ошибка при загрузке списка участников. Пожалуйста, попробуйте ещё раз.');
   }
 });
 
@@ -301,12 +225,12 @@ bot.command('find', async (ctx) => {
 
   if (!searchTerm) {
     ctx.reply(
-      `🔍 *Find Member*\n\n` +
-      `Please specify the member name or ID to search:\n\n` +
-      `📝 *Examples:*\n` +
-      `• \`/find John\`\n` +
-      `• \`/find John Doe\`\n` +
-      `• \`/find 5\` (member ID)`,
+      `🔍 *Найти участника*\n\n` +
+      `Пожалуйста, укажите имя участника или ID для поиска:\n\n` +
+      `📝 *Примеры:*\n` +
+      `• \`/find Иван\`\n` +
+      `• \`/find Иван Петров\`\n` +
+      `• \`/find 5\` (ID участника)`,
       { parse_mode: 'Markdown' }
     );
     return;
@@ -320,20 +244,20 @@ bot.command('find', async (ctx) => {
     const result = await db.findMember(identifier);
 
     if (!result.success) {
-      ctx.reply(`❌ Member not found: ${result.error}`);
+      ctx.reply(`❌ Участник не найден: ${result.error}`);
       return;
     }
 
     const member = result.member!;
-    const joinDate = member.joined_date ? new Date(member.joined_date).toLocaleDateString() : 'Unknown';
-    const role = member.role || 'Member';
+    const joinDate = member.joined_date ? new Date(member.joined_date).toLocaleDateString() : 'Неизвестно';
+    const role = member.role || 'Участник';
 
-    let message = `👤 *Member Details*\n\n`;
-    message += `📛 *Name:* ${member.name}\n`;
+    let message = `👤 *Данные участника*\n\n`;
+    message += `🏷️ *Имя:* ${member.name}\n`;
     message += `🆔 *ID:* ${member.id}\n`;
-    message += `📋 *Role:* ${role}\n`;
-    message += `📅 *Joined:* ${joinDate}\n`;
-    message += `📊 *Status:* ${member.status || 'Active'}\n`;
+    message += `📋 *Роль:* ${role}\n`;
+    message += `📅 *Присоединился:* ${joinDate}\n`;
+    message += `📊 *Статус:* ${member.status || 'Активный'}\n`;
 
     if (member.telegram_username) {
       message += `💬 *Telegram:* @${member.telegram_username}\n`;
@@ -342,17 +266,17 @@ bot.command('find', async (ctx) => {
       message += `📧 *Email:* ${member.email}\n`;
     }
     if (member.phone) {
-      message += `📞 *Phone:* ${member.phone}\n`;
+      message += `📞 *Телефон:* ${member.phone}\n`;
     }
     if (member.notes) {
-      message += `📝 *Notes:* ${member.notes}\n`;
+      message += `📝 *Заметки:* ${member.notes}\n`;
     }
 
     ctx.reply(message, { parse_mode: 'Markdown' });
 
   } catch (error) {
     logUserAction(ctx, 'ERROR', `Find member failed: ${error}`);
-    ctx.reply('❌ An error occurred while searching for the member. Please try again.');
+    ctx.reply('❌ Произошла ошибка при поиске участника. Пожалуйста, попробуйте ещё раз.');
   }
 });
 
@@ -364,31 +288,31 @@ bot.command('stats', async (ctx) => {
     const result = await db.getMemberStats();
 
     if (!result.success) {
-      ctx.reply(`❌ Failed to fetch statistics: ${result.error}`);
+      ctx.reply(`❌ Не удалось загрузить статистику: ${result.error}`);
       return;
     }
 
     const stats = result.stats!;
     const { totalMembers, roles } = stats;
 
-    let message = `📊 *Toastmasters Glagol Club Statistics*\n\n`;
-    message += `👥 *Total Active Members:* ${totalMembers}\n\n`;
+    let message = `📊 *Статистика клуба Toastmasters Glagol*\n\n`;
+    message += `👥 *Общее количество активных участников:* ${totalMembers}\n\n`;
     
     if (Object.keys(roles).length > 0) {
-      message += `📋 *Members by Role:*\n`;
+      message += `📋 *Участники по ролям:*\n`;
       Object.entries(roles).forEach(([role, count]) => {
         message += `• ${role}: ${count}\n`;
       });
     }
 
-    message += `\n📅 *Last updated:* ${new Date().toLocaleDateString()}\n`;
-    message += `\n💡 Use /list to see all members`;
+    message += `\n📅 *Последнее обновление:* ${new Date().toLocaleDateString()}\n`;
+    message += `\n💡 Используйте /list, чтобы увидеть всех участников`;
 
     ctx.reply(message, { parse_mode: 'Markdown' });
 
   } catch (error) {
     logUserAction(ctx, 'ERROR', `Get stats failed: ${error}`);
-    ctx.reply('❌ An error occurred while fetching statistics. Please try again.');
+    ctx.reply('❌ Произошла ошибка при загрузке статистики. Пожалуйста, попробуйте ещё раз.');
   }
 });
 
@@ -409,19 +333,19 @@ bot.on('text', async (ctx) => {
     const parts = message.split('|').map(part => part.trim());
     
     if (parts.length < 1 || !parts[0]) {
-      ctx.reply('❌ Please provide at least a name for the member.');
+      ctx.reply('❌ Пожалуйста, укажите хотя бы имя для участника.');
       return;
     }
 
     const member: Member = {
       name: parts[0],
-      role: parts[1] || 'Member',
+      role: parts[1] || 'Участник',
       email: parts[2] || undefined,
       phone: parts[3] || undefined,
       notes: parts[4] || undefined,
       telegram_username: ctx.from?.username,
       telegram_user_id: ctx.from?.id,
-      status: 'Active'
+      status: 'Активный'
     };
 
     console.log('🔍 DEBUG: Attempting to add member:', JSON.stringify(member, null, 2));
@@ -432,7 +356,7 @@ bot.on('text', async (ctx) => {
       console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
 
       if (!result.success) {
-        ctx.reply(`❌ Failed to add member: ${result.error}`);
+        ctx.reply(`❌ Не удалось добавить участника: ${result.error}`);
         console.log('❌ DEBUG: Add member failed:', result.error);
         return;
       }
@@ -440,12 +364,12 @@ bot.on('text', async (ctx) => {
       const addedMember = result.member!;
       
       ctx.reply(
-        `✅ *Member Added Successfully*\n\n` +
-        `📛 *Name:* ${addedMember.name}\n` +
-        `📋 *Role:* ${addedMember.role}\n` +
+        `✅ *Участник успешно добавлен*\n\n` +
+        `🏷️ *Имя:* ${addedMember.name}\n` +
+        `📋 *Роль:* ${addedMember.role}\n` +
         `🆔 *ID:* ${addedMember.id}\n` +
-        `📅 *Added:* ${new Date().toLocaleDateString()}\n\n` +
-        `Welcome to Toastmasters Glagol! 🎉`,
+        `📅 *Добавлен:* ${new Date().toLocaleDateString()}\n\n` +
+        `Добро пожаловать в Toastmasters Glagol! 🎉`,
         { parse_mode: 'Markdown' }
       );
 
@@ -455,7 +379,7 @@ bot.on('text', async (ctx) => {
     } catch (error) {
       logUserAction(ctx, 'ERROR', `Add member failed: ${error}`);
       console.error('❌ DEBUG: Exception during add member:', error);
-      ctx.reply('❌ An error occurred while adding the member. Please try again.');
+      ctx.reply('❌ Произошла ошибка при добавлении участника. Пожалуйста, попробуйте ещё раз.');
     }
     
     return;
@@ -467,10 +391,10 @@ bot.on('text', async (ctx) => {
     
     const member: Member = {
       name: message,
-      role: 'Member',
+      role: 'Участник',
       telegram_username: ctx.from?.username,
       telegram_user_id: ctx.from?.id,
-      status: 'Active'
+      status: 'Активный'
     };
 
     console.log('🔍 DEBUG: Attempting to add simple member:', JSON.stringify(member, null, 2));
@@ -481,7 +405,7 @@ bot.on('text', async (ctx) => {
       console.log('🔍 DEBUG: Database result:', JSON.stringify(result, null, 2));
 
       if (!result.success) {
-        ctx.reply(`❌ Failed to add member: ${result.error}`);
+        ctx.reply(`❌ Не удалось добавить участника: ${result.error}`);
         console.log('❌ DEBUG: Add member failed:', result.error);
         return;
       }
@@ -489,12 +413,12 @@ bot.on('text', async (ctx) => {
       const addedMember = result.member!;
       
       ctx.reply(
-        `✅ *Member Added Successfully*\n\n` +
-        `📛 *Name:* ${addedMember.name}\n` +
-        `📋 *Role:* Member\n` +
+        `✅ *Участник успешно добавлен*\n\n` +
+        `🏷️ *Имя:* ${addedMember.name}\n` +
+        `📋 *Роль:* Участник\n` +
         `🆔 *ID:* ${addedMember.id}\n\n` +
-        `Welcome to Toastmasters Glagol! 🎉\n\n` +
-        `💡 *Tip:* Use the format \`Name | Role | Email | Phone | Notes\` for more details next time.`,
+        `Добро пожаловать в Toastmasters Glagol! 🎉\n\n` +
+        `💡 *Совет:* Используйте формат \`Имя | Роль | Email | Телефон | Заметки\` для более подробной информации в следующий раз.`,
         { parse_mode: 'Markdown' }
       );
 
@@ -504,7 +428,7 @@ bot.on('text', async (ctx) => {
     } catch (error) {
       logUserAction(ctx, 'ERROR', `Add member failed: ${error}`);
       console.error('❌ DEBUG: Exception during add member:', error);
-      ctx.reply('❌ An error occurred while adding the member. Please try again.');
+      ctx.reply('❌ Произошла ошибка при добавлении участника. Пожалуйста, попробуйте ещё раз.');
     }
     
     return;
@@ -512,19 +436,19 @@ bot.on('text', async (ctx) => {
 
   // Default response for other text messages
   console.log('🔍 DEBUG: Message not recognized as member data, sending help response');
-  if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
+  if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi') || message.toLowerCase().includes('привет') || message.toLowerCase().includes('здравствуй')) {
     ctx.reply(
-      `Hello ${ctx.from?.first_name}! 👋\n\n` +
-      `I'm the Toastmasters Glagol Members Bot.\n` +
-      `Use /help to see what I can do!`
+      `Привет, ${ctx.from?.first_name}! 👋\n\n` +
+      `Я - бот для участников Toastmasters Glagol.\n` +
+      `Используйте /help, чтобы увидеть, что я умею!`
     );
   } else {
     ctx.reply(
-      `Thanks for your message! 💬\n\n` +
-      `📋 To add a member, use the format:\n` +
-      `\`Name | Role | Email | Phone | Notes\`\n\n` +
-      `Or just send a name like: \`John Doe\`\n\n` +
-      `Use /help to see all available commands.`,
+      `Спасибо за сообщение! 💬\n\n` +
+      `📋 Для добавления участника используйте формат:\n` +
+      `\`Имя | Роль | Email | Телефон | Заметки\`\n\n` +
+      `Или просто отправьте имя, например: \`Иван Петров\`\n\n` +
+      `Используйте /help, чтобы увидеть все доступные команды.`,
       { parse_mode: 'Markdown' }
     );
   }
@@ -534,8 +458,8 @@ bot.on('text', async (ctx) => {
 bot.on('sticker', (ctx) => {
   logUserAction(ctx, 'STICKER', 'User sent a sticker');
   ctx.reply(
-    `Nice sticker! 😄\n\n` +
-    `Use /help to see how to manage club members.`
+    `Классный стикер! 😄\n\n` +
+    `Используйте /help, чтобы узнать, как управлять участниками клуба.`
   );
 });
 
@@ -543,8 +467,8 @@ bot.on('sticker', (ctx) => {
 bot.on('photo', (ctx) => {
   logUserAction(ctx, 'PHOTO', 'User sent a photo');
   ctx.reply(
-    `Great photo! 📸\n\n` +
-    `Use /help to see member management commands.`
+    `Отличная фотография! 📸\n\n` +
+    `Используйте /help, чтобы увидеть команды управления участниками.`
   );
 });
 
@@ -561,8 +485,8 @@ bot.catch((err, ctx) => {
   }
   
   ctx.reply(
-    '❌ Something went wrong! Please try again.\n\n' +
-    'If the problem persists, contact the club admin.'
+    '❌ Что-то пошло не так! Пожалуйста, попробуйте ещё раз.\n\n' +
+    'Если проблема сохраняется, обратитесь к администратору клуба.'
   );
 });
 
